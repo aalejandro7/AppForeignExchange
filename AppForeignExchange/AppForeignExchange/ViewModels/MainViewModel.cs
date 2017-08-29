@@ -24,6 +24,8 @@
         bool _isEnabled;
         string _result;
         ObservableCollection<Rate> _rates;
+        Rate _sourceRate;
+        Rate _targetRate;
 
         #endregion
 
@@ -48,8 +50,42 @@
             }
         }
 
-        public Rate SourceRate { get; set; }
-        public Rate TargetRate { get; set; }
+        public Rate SourceRate
+        {
+            get
+            {
+                return _sourceRate;
+            }
+
+            set
+            {
+                if (_sourceRate != value)
+                {
+                    _sourceRate = value;
+                    PropertyChanged?.Invoke
+                        (this,
+                        new PropertyChangedEventArgs(nameof(SourceRate)));
+                }
+            }
+        }
+        public Rate TargetRate
+        {
+            get
+            {
+                return _targetRate;
+            }
+
+            set
+            {
+                if (_targetRate != value)
+                {
+                    _targetRate = value;
+                    PropertyChanged?.Invoke
+                        (this,
+                        new PropertyChangedEventArgs(nameof(TargetRate)));
+                }
+            }
+        }
         public bool IsEnabled
         {
             get
@@ -152,6 +188,22 @@
 
         #region Commands
 
+        public ICommand ChangeCommand
+        {
+            get
+            {
+                return new RelayCommand(Change);
+            }
+        }
+
+        void Change()
+        {
+            var aux = SourceRate;
+            SourceRate = TargetRate;
+            TargetRate = aux;
+            Convert();
+        }
+
         public ICommand ConvertCommand
         {
             get
@@ -203,7 +255,7 @@
                 (decimal)TargetRate.TaxRate;
 
             Result = string.Format(
-            "{0}{1:C2} = {2}{3:C2}",
+            "{0} {1:C2} = {2}  {3:C2}",
             SourceRate.Code,
             amount,
             TargetRate.Code,
