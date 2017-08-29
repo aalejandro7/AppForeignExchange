@@ -1,11 +1,16 @@
 ﻿namespace AppForeignExchange.ViewModels
 {
-    using GalaSoft.MvvmLight.Command;
-    using System.Windows.Input;
-    using Xamarin.Forms;
-    using System.ComponentModel;
+
     using Models;
     using System.Collections.ObjectModel;
+    using System.Net.Http;
+    using Newtonsoft.Json;
+    using System.ComponentModel;
+    using System;
+    using System.Collections.Generic;
+    using System.Windows.Input;
+    using GalaSoft.MvvmLight.Command;
+    using Xamarin.Forms;
 
     public class MainViewModel : INotifyPropertyChanged
     {
@@ -15,76 +20,138 @@
         #endregion
 
         #region Attributes
-        string _dollars;
-        string _euros;
-        string _pounds;
+        bool _isRunning;
+        bool _isEnabled;
+        string _result;
+        ObservableCollection<Rate> _rates;
+
         #endregion
 
         #region Properties
-        public ObservableCollection<Rate> Rates { get; set; }
-        public int SourceRateId { get; set; }
-        public int TargetRateId { get; set; }
-        public bool IsEnabled { get; set; }
-        public bool IsRunning { get; set; }
-        public string Result { get; set; }
-        public string Pesos { get; set; }
         public string Amount { get; set; }
-        public string Dollars
+        public ObservableCollection<Rate> Rates
         {
             get
             {
-                return _dollars;
+                return _rates;
             }
+
             set
             {
-                if (value != _dollars)
+                if (_rates != value)
                 {
-                    _dollars = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Dollars)));
-                }
-            }
-        }
-        public string Euros
-        {
-            get
-            {
-                return _euros;
-            }
-            set
-            {
-                if (value != _euros)
-                {
-                    _euros = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Euros)));
-                }
-            }
-        }
-        public string Pounds
-        {
-            get
-            {
-                return _pounds;
-            }
-            set
-            {
-                if (value != _pounds)
-                {
-                    _pounds = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Pounds)));
+                    _rates = value;
+                    PropertyChanged?.Invoke
+                        (this,
+                        new PropertyChangedEventArgs(nameof(Rates)));
                 }
             }
         }
 
+        public Rate SourceRate { get; set; }
+        public Rate TargetRate { get; set; }
+        public bool IsEnabled
+        {
+            get
+            {
+                return _isEnabled;
+            }
+
+            set
+            {
+                if (_isEnabled != value)
+                {
+                    _isEnabled = value;
+                    PropertyChanged?.Invoke
+                        (this,
+                        new PropertyChangedEventArgs(nameof(IsEnabled)));
+                }
+            }
+        }
+        public bool IsRunning
+        {
+            get
+            {
+                return _isRunning;
+            }
+
+            set
+            {
+                if(_isRunning!= value)
+                {
+                    _isRunning = value;
+                    PropertyChanged?.Invoke
+                        (this, 
+                        new PropertyChangedEventArgs(nameof(IsRunning)));
+                }
+            }
+        }
+        public string Result
+        {
+            get
+            {
+                return _result;
+            }
+
+            set
+            {
+                if (_result != value)
+                {
+                    _result = value;
+                    PropertyChanged?.Invoke
+                        (this,
+                        new PropertyChangedEventArgs(nameof(Result)));
+                }
+            }
+        }
+ 
         #endregion
 
         #region Constructors
         public MainViewModel()
         {
-            Result = "Enter an amount, select source rate, select target rate and press convert button";
+            LoadRates();
+        }
+        #endregion
+
+        #region Methods
+        async void LoadRates()
+        {
+            IsRunning = true;
+            Result = "Loading rates...";
+
+            try
+            {
+                var client = new HttpClient();
+                client.BaseAddress = new 
+                    Uri("http://apiexchangerates.azurewebsites.net");
+                var controller = "/api/rates";
+                var response = await client.GetAsync(controller);
+                var result = await response.Content.ReadAsStringAsync();
+                if(!response.IsSuccessStatusCode)
+                {
+                    IsRunning = false;
+                    Result = result;
+                }
+
+                var rates = JsonConvert.DeserializeObject<List<Rate>>(result);
+                Rates = new ObservableCollection<Rate>(rates);
+
+                IsRunning = false;
+                IsEnabled = true;
+                Result = "Ready to convert";
+
+            }
+            catch(Exception ex)
+            {
+                IsRunning = false;
+                Result = ex.Message;
+            }
         }
         #endregion
 
         #region Commands
+
         public ICommand ConvertCommand
         {
             get
@@ -93,31 +160,57 @@
             }
 
         }
-
-
+        
         async void Convert()
         {
-            if (string.IsNullOrEmpty(Pesos))
+            if (string.IsNullOrEmpty(Amount))
             {
-                await Application.Current.MainPage.DisplayAlert("Error", "Your must enter a value in pesos...", "Accept");
+                await Application.Current.MainPage.DisplayAlert(
+                    "Error", 
+                    "Your must enter a value in amount...", 
+                    "Accept");
                 return;
             }
 
-            decimal pesos = 0;
-            if (!decimal.TryParse(Pesos, out pesos))
+            decimal amount = 0;
+            if (!decimal.TryParse(Amount, out amount))
             {
-                await Application.Current.MainPage.DisplayAlert("Error", "Your must enter a value numeric in pesos...", "Accept");
+                await Application.Current.MainPage.DisplayAlert(
+                       "Error",
+                       "Your must enter a numeric value in amount...",
+                       "Accept");
+                return;
+            }
+            if(SourceRate == null)
+            {
+                await Application.Current.MainPage.DisplayAlert(
+                    "Error",
+                    "Your must select a source rate...",
+                    "Accept");
+                return;
+            }
+            if (TargetRate == null)
+            {
+                await Application.Current.MainPage.DisplayAlert(
+                    "Error",
+                    "Your must select a tarjet rate...",
+                    "Accept");
                 return;
             }
 
-            var dollars = pesos / 3003.003M;
-            var euros = pesos / 3531.051M;
-            var pounds = pesos / 3907.237M;
+            var amountConverted = amount / 
+                (decimal)SourceRate.TaxRate * 
+                (decimal)TargetRate.TaxRate;
 
-            Dollars = string.Format("${0:N2}", dollars);
-            Euros = string.Format("€{0:N2}", euros);
-            Pounds = string.Format("£{0:N2}", pounds);
+            Result = string.Format(
+            "{0}{1:C2} = {2}{3:C2}",
+            SourceRate.Code,
+            amount,
+            TargetRate.Code,
+            amountConverted);
         }
+
+
         #endregion
     }
 }

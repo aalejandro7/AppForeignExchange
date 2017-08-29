@@ -5,10 +5,16 @@
     xmlns:control="clr-namespace:AppForeignExchange.Controls"
     x:Class="AppForeignExchange.Views.ForeignExchangePage"
     BindingContext="{Binding Main, Source={StaticResource Locator}}">
+    <ContentPage.Padding>
+        <OnPlatform 
+            x:TypeArguments="Thickness"
+            iOS="20,30,20,10"
+            Android="10"/>
+    </ContentPage.Padding>
     <ContentPage.Content>
-        <StackLayout
-            Padding="20,30,20,10">
+        <StackLayout>
             <Label
+                FontAttributes="Bold"
                 FontSize="Large"
                 HorizontalOptions="Center"
                 Text="Foreign Exchange">
@@ -34,14 +40,12 @@
                     VerticalOptions="Center"
                     WidthRequest="100">
                 </Label>
-                <control:BindablePicker
-                        Title="Select source rate..."
-                        DisplayMemberPath="Name"
-                        SelectedValuePath="RateId"
-                        ItemsSource="{Binding Rates}"
-                        SelectedValue ="{Binding Path=SourceRateId, Mode=TwoWay}"
-                        HorizontalOptions="FillAndExpand">
-                </control:BindablePicker>
+                <Picker
+                    ItemDisplayBinding="{Binding Name}"
+                    ItemsSource="{Binding Rates}"
+                    SelectedItem="{Binding SourceRate, Mode=TwoWay}"
+                    Title="Select source rate...">
+                </Picker>
             </StackLayout>
             <StackLayout
                 Orientation="Horizontal">
@@ -50,20 +54,19 @@
                     VerticalOptions="Center"
                     WidthRequest="100">
                 </Label>
-                <control:BindablePicker
-                        Title="Select target rate..."
-                        DisplayMemberPath="Name"
-                        SelectedValuePath="RateId"
-                        ItemsSource="{Binding Rates}"
-                        SelectedValue ="{Binding Path=TargetRateId, Mode=TwoWay}"
-                        HorizontalOptions="FillAndExpand">
-                </control:BindablePicker>
+                <Picker
+                    ItemDisplayBinding="{Binding Name}"
+                    ItemsSource="{Binding Rates}"
+                    SelectedItem="{Binding TargetRateId, Mode=TwoWay}"
+                    Title="Select target rate...">
+                </Picker>
             </StackLayout>
             <Button
                 Command="{Binding ConvertCommand}"
                 Margin="30,10,30,10"
                 BackgroundColor="Navy"
-                BorderRadius="23"
+                BorderRadius="25"
+                HeightRequest="50"
                 FontAttributes="Bold"
                 IsEnabled="{Binding IsEnabled, Mode=TwoWay}"
                 Text="Convert"
