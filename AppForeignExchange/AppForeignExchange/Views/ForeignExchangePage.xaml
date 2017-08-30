@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:control="clr-namespace:AppForeignExchange.Controls"
     x:Class="AppForeignExchange.Views.ForeignExchangePage"
+    xmlns:i18n="clr-namespace:AppForeignExchange.Helpers"
     BindingContext="{Binding Main, Source={StaticResource Locator}}">
     <ContentPage.Padding>
         <OnPlatform 
@@ -18,7 +19,7 @@
                 FontSize="Large"
                 HorizontalOptions="Center"
                 Margin="10"
-                Text="Foreign Exchange">
+                Text="{i18n:Translate Title}">
             </Label>
 
             <Grid>

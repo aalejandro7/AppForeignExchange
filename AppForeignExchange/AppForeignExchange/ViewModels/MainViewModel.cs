@@ -11,6 +11,7 @@
     using System.Windows.Input;
     using GalaSoft.MvvmLight.Command;
     using Xamarin.Forms;
+    using Helpers;
 
     public class MainViewModel : INotifyPropertyChanged
     {
@@ -218,9 +219,9 @@
             if (string.IsNullOrEmpty(Amount))
             {
                 await Application.Current.MainPage.DisplayAlert(
-                    "Error", 
-                    "Your must enter a value in amount...", 
-                    "Accept");
+                    Lenguages.Error, 
+                    Lenguages.AmountValidation, 
+                    Lenguages.Accept);
                 return;
             }
 

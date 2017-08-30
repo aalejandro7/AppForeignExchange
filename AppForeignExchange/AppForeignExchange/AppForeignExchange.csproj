@@ -40,6 +40,7 @@
     </Compile>
     <Compile Include="Helpers\Lenguages.cs" />
     <Compile Include="Helpers\PlatformCulture.cs" />
+    <Compile Include="Helpers\TranslateExtension.cs" />
     <Compile Include="Infrastructure\InstanceLocator.cs" />
     <Compile Include="Interfaces\ILocalize.cs" />
     <Compile Include="Models\Rate.cs" />
