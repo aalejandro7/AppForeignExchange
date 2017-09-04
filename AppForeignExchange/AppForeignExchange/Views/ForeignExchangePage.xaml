@@ -21,7 +21,6 @@
                 Margin="10"
                 Text="{i18n:Translate Title}">
             </Label>
-
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
