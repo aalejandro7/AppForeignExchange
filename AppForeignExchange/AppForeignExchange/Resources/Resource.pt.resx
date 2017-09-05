@@ -133,7 +133,7 @@
     <value>Você deve inserir um valor em quantidade.</value>
   </data>
   <data name="Convert" xml:space="preserve">
-    <value>Pronto para converter!</value>
+    <value>¡Pronto para converter!</value>
   </data>
   <data name="Error" xml:space="preserve">
     <value>Erro</value>

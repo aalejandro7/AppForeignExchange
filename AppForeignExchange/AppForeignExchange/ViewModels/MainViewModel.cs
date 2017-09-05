@@ -3,10 +3,7 @@
 
     using Models;
     using System.Collections.ObjectModel;
-    using System.Net.Http;
-    using Newtonsoft.Json;
     using System.ComponentModel;
-    using System;
     using System.Collections.Generic;
     using System.Windows.Input;
     using GalaSoft.MvvmLight.Command;
@@ -20,17 +17,43 @@
         public event PropertyChangedEventHandler PropertyChanged;
         #endregion
 
+        #region Services
+        ApiService apiService;
+        #endregion
+
         #region Attributes
+
         bool _isRunning;
         bool _isEnabled;
         string _result;
         ObservableCollection<Rate> _rates;
         Rate _sourceRate;
         Rate _targetRate;
+        string _status;
 
         #endregion
 
         #region Properties
+        public string Status
+        {
+            get
+            {
+                return _status;
+            }
+
+            set
+            {
+                if (_status != value)
+                {
+                    _status = value;
+                    PropertyChanged?.Invoke
+                        (this,
+                        new PropertyChangedEventArgs(nameof(Status)));
+                }
+            }
+
+        }
+
         public string Amount { get; set; }
         public ObservableCollection<Rate> Rates
         {
@@ -147,6 +170,7 @@
         #region Constructors
         public MainViewModel()
         {
+            apiService = new ApiService();
             LoadRates();
         }
         #endregion
@@ -155,35 +179,24 @@
         async void LoadRates()
         {
             IsRunning = true;
-            Result = "Loading rates...";
+            Result = Lenguages.Convert;
+            var response = await apiService.GetList<Rate>(
+                "http://apiexchangerates.azurewebsites.net",
+                "api/Rates");
 
-            try
-            {
-                var client = new HttpClient();
-                client.BaseAddress = new 
-                    Uri("http://apiexchangerates.azurewebsites.net");
-                var controller = "/api/rates";
-                var response = await client.GetAsync(controller);
-                var result = await response.Content.ReadAsStringAsync();
-                if(!response.IsSuccessStatusCode)
-                {
-                    IsRunning = false;
-                    Result = result;
-                }
-
-                var rates = JsonConvert.DeserializeObject<List<Rate>>(result);
-                Rates = new ObservableCollection<Rate>(rates);
-
-                IsRunning = false;
-                IsEnabled = true;
-                Result = "Ready to convert";
-
-            }
-            catch(Exception ex)
+            if (!response.IsSuccess)
             {
                 IsRunning = false;
-                Result = ex.Message;
+                Result = response.Message;
+                return;
             }
+
+            Rates = new ObservableCollection<Rate>((List<Rate>) response.Result);
+
+            IsRunning = false;
+            IsEnabled = true;
+            Result = Lenguages.Convert;
+
         }
         #endregion
 

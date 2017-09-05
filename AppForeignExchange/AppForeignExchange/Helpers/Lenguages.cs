@@ -29,5 +29,9 @@
         {
             get { return Resource.Title; }
         }
+        public static string Convert
+        {
+            get { return Resource.Convert; }
+        }
     }
 }

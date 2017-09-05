@@ -105,10 +105,15 @@
                 HorizontalOptions="FillAndExpand"
                 HorizontalTextAlignment="Center"
                 FontSize="Large"
+                Margin="0,10"
                 Text="{Binding  Result, Mode=TwoWay}"
                 TextColor="Fuchsia"
                 VerticalTextAlignment="Center"
                 VerticalOptions="FillAndExpand">
+            </Label>
+            <Label
+                HorizontalOptions="Center"
+                Text="{Binding Status, Mode=TwoWay}">                
             </Label>
         </StackLayout>
     </ContentPage.Content>
