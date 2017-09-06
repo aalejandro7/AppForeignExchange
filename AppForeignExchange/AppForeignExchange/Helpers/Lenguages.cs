@@ -33,5 +33,17 @@
         {
             get { return Resource.Convert; }
         }
+        public static string Connection
+        {
+            get { return Resource.Connection; }
+        }
+        public static string NoConnection
+        {
+            get { return Resource.NoConnection; }
+        }
+        public static string LoadedInternet
+        {
+            get { return Resource.LoadedInternet; }
+        }
     }
 }

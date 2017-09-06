@@ -132,17 +132,26 @@
   <data name="AmountValidation" xml:space="preserve">
     <value>You must enter a value in amount.</value>
   </data>
+  <data name="Connection" xml:space="preserve">
+    <value>Check your internet settings</value>
+  </data>
   <data name="Convert" xml:space="preserve">
     <value>¡Ready to convert!</value>
   </data>
   <data name="Error" xml:space="preserve">
     <value>Error</value>
   </data>
+  <data name="LoadedInternet" xml:space="preserve">
+    <value>Rates loaded from internet.</value>
+  </data>
   <data name="Loading" xml:space="preserve">
     <value>Loading rates…</value>
   </data>
   <data name="Message" xml:space="preserve">
     <value>Ready to convert</value>
+  </data>
+  <data name="NoConnection" xml:space="preserve">
+    <value>Check your internet connection</value>
   </data>
   <data name="Ready" xml:space="preserve">
     <value>Ready to convert!</value>
