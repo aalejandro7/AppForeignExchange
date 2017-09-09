@@ -45,5 +45,9 @@
         {
             get { return Resource.LoadedInternet; }
         }
+        public static string LoadedLocal
+        {
+            get { return Resource.LoadedLocal; }
+        }
     }
 }

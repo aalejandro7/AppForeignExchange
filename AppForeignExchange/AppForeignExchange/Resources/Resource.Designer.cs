@@ -143,6 +143,15 @@ namespace AppForeignExchange.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Rates loaded from local data..
+        /// </summary>
+        public static string LoadedLocal {
+            get {
+                return ResourceManager.GetString("LoadedLocal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Loading rates….
         /// </summary>
         public static string Loading {
